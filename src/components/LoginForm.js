@@ -6,10 +6,6 @@ import Axios from 'axios';
 import { toast } from "react-toastify";
 import { setAuthToken } from "../services/setAuthToken";
 
-//http://restapi.adequateshop.com
-// /api/authaccount/registration
-// /api/authaccount/login
-
 function LoginForm(props){
     const initialValues={
         email:'',
@@ -27,14 +23,24 @@ function LoginForm(props){
             password:values.password
         }
         console.log(loginPayload)
-        Axios.post('login',loginPayload)
+        Axios.post('https://mainapi.springfest.in/api/user/login/password',loginPayload)
         .then(
             (response)=>{
-                console.log(response.data.token)
-                const token = response.data.token;
-
-                sessionStorage.setItem("token",token)
-                setAuthToken(token)
+                console.log(response)
+                console.log(response.data.message.token)
+                if(response.data.code==0){
+                    const token = response.data.message.token;
+                    sessionStorage.setItem("token",token)
+                    setAuthToken(token)
+                    toast.success("Successfully registered. Now go to login page.", {
+                        position: toast.POSITION.TOP_CENTER
+                    });
+                }
+                else{
+                    toast.error("Wrong credentials.", {
+                        position: toast.POSITION.TOP_CENTER
+                    });
+                }
                 props.closing()
             }
             //(resp) => {

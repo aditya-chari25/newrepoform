@@ -3,12 +3,10 @@ import { Form, Formik } from "formik";
 import * as Yup from 'yup';
 import FormikControl from './FormikControl';
 import Axios from 'axios';
+import { toast } from "react-toastify";
+import { setAuthToken } from "../services/setAuthToken";
 
-//http://restapi.adequateshop.com
-// /api/authaccount/registration
-// /api/authaccount/login
-
-function LoginForm(){
+function LoginForm(props){
     const initialValues={
         email:'',
         password:''
@@ -20,108 +18,129 @@ function LoginForm(){
 
     const onSubmit=(values)=>{
         console.log('Form data',values)
-        // setSubmit(["Please Wait...", "Register"])
-        // Axios.post('https://mainapi.springfest.in/api/user/login/password', {
-        //     email: values.email,
-        //     password: values.password
-        // }).then(
-        //     (resp) => {
-        //         const data = resp.data
-        //         console.log(data)
-        //         if (data.code !== 0) {
-        //             //closeModalLogin()
-        //             toast.error(data.message, { position: toast.POSITION.TOP_CENTER })
-        //         }
-        //         else {
-        //             localStorage.setItem('data', JSON.stringify(data.message))
-        //             localStorage.removeItem('college_list')
+        const loginPayload={
+            email:values.email,
+            password:values.password
+        }
+        console.log(loginPayload)
+        Axios.post('https://mainapi.springfest.in/api/user/login/password',loginPayload)
+        .then(
+            (response)=>{
+                console.log(response)
+                console.log(response.data.message.token)
+                if(response.data.code==0){
+                    const token = response.data.message.token;
+                    sessionStorage.setItem("token",token)
+                    setAuthToken(token)
+                    toast.success("Successfully registered. Now go to login page.", {
+                        position: toast.POSITION.TOP_CENTER
+                    });
+                }
+                else{
+                    toast.error("Wrong credentials.", {
+                        position: toast.POSITION.TOP_CENTER
+                    });
+                }
+                props.closing()
+            }
+            //(resp) => {
+            //     const data = resp.data
+            //     console.log(data)
+            //     if (data.code !== 0) {
+            //         //closeModalLogin()
+            //         toast.error(data.message, { position: toast.POSITION.TOP_CENTER })
+            //     }
+            //     else {
+            //         localStorage.setItem('data', JSON.stringify(data.message))
+            //         localStorage.removeItem('college_list')
 
-        //             Axios.get('https://mainapi.springfest.in/api/event/get_events')
-        //                 .then((resp) => {
-        //                     var eventsid = {}
-        //                     var msg = resp.data.message
-        //                     console.log(msg)
-        //                     for (var i = 0; i < msg.length; i++) {
-        //                         var evs = msg[i].events
-        //                         for (var j = 0; j < evs.length; j++)
-        //                             eventsid[evs[j].name] = evs[j].id
-        //                     }
-        //                     localStorage.setItem("events", JSON.stringify(eventsid))
-        //                     Axios.get("https://mainapi.springfest.in/api/event/get_all_event_details")
-        //                         .then(res => {
-        //                             if (res.data.code === 0) {
-        //                                 const evsdetailsresp = res.data.message
-        //                                 var evsdetails = {}
-        //                                 var evstype = {}
-        //                                 for (var i = 0; i < evsdetailsresp.length; i++) {
+            //         Axios.get('https://mainapi.springfest.in/api/event/get_events')
+            //             .then((resp) => {
+            //                 var eventsid = {}
+            //                 var msg = resp.data.message
+            //                 console.log(msg)
+            //                 for (var i = 0; i < msg.length; i++) {
+            //                     var evs = msg[i].events
+            //                     for (var j = 0; j < evs.length; j++)
+            //                         eventsid[evs[j].name] = evs[j].id
+            //                 }
+            //                 localStorage.setItem("events", JSON.stringify(eventsid))
+            //                 Axios.get("https://mainapi.springfest.in/api/event/get_all_event_details")
+            //                     .then(res => {
+            //                         if (res.data.code === 0) {
+            //                             const evsdetailsresp = res.data.message
+            //                             var evsdetails = {}
+            //                             var evstype = {}
+            //                             for (var i = 0; i < evsdetailsresp.length; i++) {
 
-        //                                     const cat = evsdetailsresp[i].category
-        //                                     evsdetails[cat] = {}
-        //                                     for (var j = 0; j < evsdetailsresp[i].events.length; j++) {
-        //                                         evstype[evsdetailsresp[i].events[j].event] = cat
-        //                                         evsdetails[cat][evsdetailsresp[i].events[j].event] = evsdetailsresp[i].events[j]
-        //                                     }
-        //                                 }
-        //                                 console.log(evsdetails)
-        //                                 console.log(evstype)
-        //                                 localStorage.setItem('evsdetails', JSON.stringify(evsdetails))
-        //                                 localStorage.setItem('evstype', JSON.stringify(evstype))
-        //                             }
-        //                             else {
-        //                                 console.log("error");
-        //                             }
-        //                             Axios.post("https://mainapi.springfest.in/api/user/get_registered_events", {
-        //                                 token: data.message.token
-        //                             }).then((resp) => {
-        //                                 const msg = resp.data.message
-        //                                 const keys = Object.keys(msg)
-        //                                 console.log(msg)
-        //                                 var regevs = {}
-        //                                 for (var i = 0; i < keys.length; i++) {
-        //                                     var evs = msg[keys[i]]
-        //                                     for (var j = 0; j < evs.length; j++) {
-        //                                         if (i === 1)
-        //                                             regevs[evs[j].event_id] = {
-        //                                                 reg_id: evs[j].reg_id,
-        //                                                 type: keys[i],
-        //                                                 name: evs[j].event_name,
-        //                                                 iscert: evs[j].is_cert
-        //                                             }
-        //                                         else if (i === 0)
-        //                                             regevs[evs[j].event_id] = {
-        //                                                 group_id: evs[j].group_id,
-        //                                                 type: keys[i],
-        //                                                 name: evs[j].event_name,
-        //                                                 members: evs[j].members,
-        //                                                 iscert: evs[j].is_cert,
-        //                                                 leadersfid: evs[j].leader_id
-        //                                             }
-        //                                     }
-        //                                 }
-        //                                 localStorage.setItem('reg_events', JSON.stringify(regevs))
-        //                                 //closeModalLogin()
-        //                                 toast.success("Successfully logged in", { position: toast.POSITION.TOP_CENTER })
-        //                                 props.setAuth(true)
-        //                                 //window.location.href = "/dashboard"
-        //                             }).catch((err) => {
-        //                                 console.log(err)
-        //                             })
-        //                         })
-        //                         .catch(error => {
-        //                             return "error";
-        //                         });
-        //                 }).catch((err) => {
-        //                     console.log(err)
-        //                 })
-        //         }
-        //         setSubmit(["Log In", "Register"])
-        //     }
-        // ).catch(
-        //     (err) => {
-        //         console.log(err)
-        //         setSubmit(["Log In", "Register"])
-        //     }
-        // )
+            //                                 const cat = evsdetailsresp[i].category
+            //                                 evsdetails[cat] = {}
+            //                                 for (var j = 0; j < evsdetailsresp[i].events.length; j++) {
+            //                                     evstype[evsdetailsresp[i].events[j].event] = cat
+            //                                     evsdetails[cat][evsdetailsresp[i].events[j].event] = evsdetailsresp[i].events[j]
+            //                                 }
+            //                             }
+            //                             console.log(evsdetails)
+            //                             console.log(evstype)
+            //                             localStorage.setItem('evsdetails', JSON.stringify(evsdetails))
+            //                             localStorage.setItem('evstype', JSON.stringify(evstype))
+            //                         }
+            //                         else {
+            //                             console.log("error");
+            //                         }
+            //                         Axios.post("https://mainapi.springfest.in/api/user/get_registered_events", {
+            //                             token: data.message.token
+            //                         }).then((resp) => {
+            //                             const msg = resp.data.message
+            //                             const keys = Object.keys(msg)
+            //                             console.log(msg)
+            //                             var regevs = {}
+            //                             for (var i = 0; i < keys.length; i++) {
+            //                                 var evs = msg[keys[i]]
+            //                                 for (var j = 0; j < evs.length; j++) {
+            //                                     if (i === 1)
+            //                                         regevs[evs[j].event_id] = {
+            //                                             reg_id: evs[j].reg_id,
+            //                                             type: keys[i],
+            //                                             name: evs[j].event_name,
+            //                                             iscert: evs[j].is_cert
+            //                                         }
+            //                                     else if (i === 0)
+            //                                         regevs[evs[j].event_id] = {
+            //                                             group_id: evs[j].group_id,
+            //                                             type: keys[i],
+            //                                             name: evs[j].event_name,
+            //                                             members: evs[j].members,
+            //                                             iscert: evs[j].is_cert,
+            //                                             leadersfid: evs[j].leader_id
+            //                                         }
+            //                                 }
+            //                             }
+            //                             localStorage.setItem('reg_events', JSON.stringify(regevs))
+            //                             //closeModalLogin()
+            //                             console.log('hello logger')
+            //                             toast.success("Successfully logged in", { position: toast.POSITION.TOP_CENTER })
+            //                             props.setAuth(true)
+            //                             //window.location.href = "/dashboard"
+            //                         }).catch((err) => {
+            //                             console.log(err)
+            //                         })
+            //                     })
+            //                     .catch(error => {
+            //                         return "error";
+            //                     });
+            //             }).catch((err) => {
+            //                 console.log(err)
+            //             })
+            //     }
+            //     // setSubmit(["Log In", "Register"])
+            // }
+        ).catch(
+            (err) => {
+                console.log(err)
+                // setSubmit(["Log In", "Register"])
+            }
+        )
     }
     return(
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>{

@@ -6,7 +6,7 @@ import $ from "jquery";
 const headers = { "Content-Type": "application/json" };
 
 export const registerUser = (data, refer) =>
-    HTTP.post("api/user/register_user", JSON.stringify(data), {
+    HTTP.post("/api/user/register_user", JSON.stringify(data), {
         headers: headers
     })
         .then(res => {
@@ -18,7 +18,7 @@ export const registerUser = (data, refer) =>
 });
 
 export const passwordLogin = data =>
-    HTTP.post("api/user/login/password", JSON.stringify(data), {
+    HTTP.post("/api/login", JSON.stringify(data), {
         headers: headers
     })
         .then(res => {

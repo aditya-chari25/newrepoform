@@ -82,7 +82,7 @@ function RegForm(){
                 yop: String(values.yop),
                 security_qn:"What is your name",
                 security_ans:values.name,
-                captcha: "1",
+                captcha: values.captcha,
 
             };
             console.log(req)
@@ -194,27 +194,35 @@ function RegForm(){
                             type='text'
                             label='Year Of Passing'
                             name='yop'/>
-                            <Field name='verify' className="Input captchae">
-                            {(props) => {
-                                const { field, form } = props
-                                return (
-                                    <Recaptcha
-                                        sitekey='6Ldpbz0UAAAAAHWONmYJCv8nbMwG4w-htCr8iC1p'//'6LdaqAUaAAAAADDxBzlEOWodcZDpymVMc_C-oW4f'
-                                        theme="light"
-                                        render='explicit'
-                                        verifyCallback={(resp) => {
+                            <div style={{marginLeft: '8%'}}>
+                            <Field name="captcha">
+                                {(props) => {
+                                    console.log("props")
+                                    const { field, form } = props;
+                                    console.log(props)
+                                        return (
+                                            <>
+                                                <>{console.log(5)}</>
+                                            <Recaptcha
+                                              sitekey="6Ldpbz0UAAAAAHWONmYJCv8nbMwG4w-htCr8iC1p"
+                                              render="explicit"
+                                              verifyCallback={(resp) => {
+                                                form.setFieldValue(
+                                                  field.name,
+                                                  resp
+                                                );
+                                              }}
+                                              onloadCallback={() =>
+                                                console.log("Captcha loaded")
+                                              }
+                                            />
+                                          </>
+                                        );
+                                }}
+                            </Field>
+                            </div>
 
-                                            // console.log("verifyCallback" + resp)
-                                            form.setFieldValue("captcha", resp)
-                                            form.setFieldValue('verify', true)
-                                        }}
-                                        onloadCallback={() => {
-                                            console.log('Captcha loaded')
-                                        }}
-                                    />
-                                )
-                            }}
-                        </Field>
+
                             <button type='submit' disabled={!formik.isValid}>Submit</button>
                         </Form>
                     );

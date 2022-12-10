@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-axios.defaults.baseURL='https://reqres.in/api/'
+axios.defaults.baseURL='https://mainapi.springfest.in/'
 root.render(
   <React.StrictMode>
     <App />

@@ -32,7 +32,7 @@ function LoginForm(props){
                     const token = response.data.message.token;
                     sessionStorage.setItem("token",token)
                     setAuthToken(token)
-                    toast.success("Successfully registered. Now go to login page.", {
+                    toast.success("Successfully logged in", {
                         position: toast.POSITION.TOP_CENTER
                     });
                 }

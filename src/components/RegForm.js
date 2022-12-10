@@ -4,11 +4,11 @@ import * as Yup from 'yup';
 import FormikControl from './FormikControl';
 import Axios from 'axios';
 import { toast } from "react-toastify";
-import Recaptcha from "react-recaptcha";
-import { ToastContainer } from 'react-toastify';
+var Recaptcha = require("react-recaptcha");
 
 function RegForm(){
     const [dobtype, setDobtype] = useState('text')
+    const [captcha, setCaptcha]= useState("");
     const gendropoptions=[
         {
             key:'Select an option',value:''
@@ -122,17 +122,6 @@ function RegForm(){
         };
     return(
         <div>
-            <ToastContainer
-                        position="top-center"
-                        autoClose={5000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        />
             <Formik initialValues={initialValuesReg} validationSchema={validationSchemaReg} onSubmit={onSubmit}>{
                 formik=>{
                     return(
@@ -201,8 +190,6 @@ function RegForm(){
                                     const { field, form } = props;
                                     console.log(props)
                                         return (
-                                            <>
-                                                <>{console.log(5)}</>
                                             <Recaptcha
                                               sitekey="6Ldpbz0UAAAAAHWONmYJCv8nbMwG4w-htCr8iC1p"
                                               render="explicit"
@@ -216,10 +203,10 @@ function RegForm(){
                                                 console.log("Captcha loaded")
                                               }
                                             />
-                                          </>
                                         );
                                 }}
                             </Field>
+                            
                             </div>
 
 
